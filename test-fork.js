@@ -24,9 +24,9 @@ async function main() {
         
         for (let i = 0; i < Math.min(5, signers.length); i++) {
             const signer = signers[i];
-            const balance = await signer.getBalance();
+            const balance = await ethers.provider.getBalance(signer.address);
             console.log(`   账户 ${i + 1}: ${signer.address}`);
-            console.log(`   余额: ${ethers.utils.formatEther(balance)} ETH`);
+            console.log(`   余额: ${ethers.formatEther(balance)} ETH`);
         }
         
         if (signers.length > 5) {
@@ -49,10 +49,10 @@ async function main() {
         // 测试交易功能
         console.log(`🔄 测试交易功能:`);
         const [sender, receiver] = signers;
-        const transferAmount = ethers.utils.parseEther("1.0");
+        const transferAmount = ethers.parseEther("1.0");
         
-        const balanceBefore = await receiver.getBalance();
-        console.log(`   转账前接收者余额: ${ethers.utils.formatEther(balanceBefore)} ETH`);
+        const balanceBefore = await ethers.provider.getBalance(receiver.address);
+        console.log(`   转账前接收者余额: ${ethers.formatEther(balanceBefore)} ETH`);
         
         const tx = await sender.sendTransaction({
             to: receiver.address,
@@ -62,9 +62,9 @@ async function main() {
         console.log(`   交易哈希: ${tx.hash}`);
         await tx.wait();
         
-        const balanceAfter = await receiver.getBalance();
-        console.log(`   转账后接收者余额: ${ethers.utils.formatEther(balanceAfter)} ETH`);
-        console.log(`   转账金额: ${ethers.utils.formatEther(balanceAfter.sub(balanceBefore))} ETH\n`);
+        const balanceAfter = await ethers.provider.getBalance(receiver.address);
+        console.log(`   转账后接收者余额: ${ethers.formatEther(balanceAfter)} ETH`);
+        console.log(`   转账金额: ${ethers.formatEther(balanceAfter - balanceBefore)} ETH\n`);
         
         console.log(`🎉 Fork测试完成！所有功能正常工作。`);
         
